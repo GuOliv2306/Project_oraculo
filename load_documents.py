@@ -26,9 +26,9 @@ def carrega_csv(arquivo):
     documents= '\n\n'.join([doc.page_content for doc in list_documents])
     return documents
 
-def carrega_site(url):
+def carrega_site(arquivo):
     """Carrega um site."""
-    loader = WebBaseLoader(url)
+    loader = WebBaseLoader(arquivo)
     list_documents = loader.load()
     documents= '\n\n'.join([doc.page_content for doc in list_documents])
     return documents
