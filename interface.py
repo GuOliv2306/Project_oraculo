@@ -2,6 +2,8 @@ import streamlit as st
 from langchain.memory import ConversationBufferMemory
 from langchain_openai import ChatOpenAI
 from langchain_groq import ChatGroq
+from load_documents import *
+import tempfile, os
 
 MEMORIA=ConversationBufferMemory()
 
@@ -21,9 +23,46 @@ CONFIG_MODELS = {
 
 
 
-def carrega_modelo(provedor,modelo,api_key):
-    chat=CONFIG_MODELS[provedor]['chat'](model=modelo,api_key=api_key)
-    st.session_state['chat']=chat
+def carrega_modelo(provedor,modelo,api_key,tipo_arquivo=None,arquivo=None):
+    temp_file_path = None
+    
+    try:
+        if tipo_arquivo == "Youtube":
+            documents = carrega_youtube(arquivo)
+        elif tipo_arquivo == "site":
+            documents = carrega_site(arquivo)
+        elif tipo_arquivo == "pdf" and arquivo is not None:
+            # Usar delete=False para impedir que o arquivo seja excluído ao fechar
+            temp_file = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
+            temp_file.write(arquivo.read())
+            temp_file.flush()
+            temp_file.close()  # Fechar o arquivo manualmente
+            temp_file_path = temp_file.name
+            documents = carrega_pdf(temp_file_path)
+        elif tipo_arquivo == "txt" and arquivo is not None:
+            temp_file = tempfile.NamedTemporaryFile(suffix=".txt", delete=False)
+            temp_file.write(arquivo.read())
+            temp_file.flush()
+            temp_file.close()
+            temp_file_path = temp_file.name
+            documents = carrega_txt(temp_file_path)
+        elif tipo_arquivo == "csv" and arquivo is not None:
+            temp_file = tempfile.NamedTemporaryFile(suffix=".csv", delete=False)
+            temp_file.write(arquivo.read())
+            temp_file.flush()
+            temp_file.close()
+            temp_file_path = temp_file.name
+            documents = carrega_csv(temp_file_path)
+        else:
+            raise ValueError("Tipo de arquivo não suportado ou arquivo não fornecido.")
+        
+        print(documents)
+        chat = CONFIG_MODELS[provedor]['chat'](model=modelo, api_key=api_key)
+        st.session_state['chat'] = chat
+    finally:
+        # Limpar o arquivo temporário se existir
+        if temp_file_path and os.path.exists(temp_file_path):
+            os.unlink(temp_file_path)
 
 
 def pagina():
@@ -69,7 +108,7 @@ def sidebar():
         st.session_state[f"{provedor}_api_key"]=api_key
 
         if st.button("Carregar modelo", use_container_width=True):
-            chat=carrega_modelo(provedor,modelo,api_key)
+            chat=carrega_modelo(provedor,modelo,api_key,tipo_arquivo,arquivo)
             
 
 
