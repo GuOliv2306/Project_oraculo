@@ -2,6 +2,9 @@
 
 from langchain_community.document_loaders import PyPDFLoader, TextLoader, CSVLoader,WebBaseLoader, YoutubeLoader
 import os
+from time import sleep
+import streamlit as st
+from fake_useragent import UserAgent
 
 
 def carrega_pdf(arquivo):
@@ -28,9 +31,20 @@ def carrega_csv(arquivo):
 
 def carrega_site(arquivo):
     """Carrega um site."""
-    loader = WebBaseLoader(arquivo)
-    list_documents = loader.load()
-    documents= '\n\n'.join([doc.page_content for doc in list_documents])
+    documents= ''
+    for i in range(10):
+        try:
+            os.environ['USER_AGENT']=UserAgent().random
+            loader = WebBaseLoader(arquivo,raise_for_status=True)
+            list_documents = loader.load()
+            documents= '\n\n'.join([doc.page_content for doc in list_documents])
+            break
+        except:
+            print(f"Erro ao carregar o site na tentativa {i+1}")
+            sleep(3)
+            
+    if documents == '':
+        st.error("Não foi possível carregar o site")
     return documents
 
 def carrega_youtube(video_id):
