@@ -6,6 +6,9 @@ from load_documents import *
 import tempfile, os
 from langchain.prompts import ChatPromptTemplate
 
+st.set_page_config(page_title="GustaBot", page_icon="🤖")
+
+
 MEMORIA=ConversationBufferMemory()
 
 
@@ -141,6 +144,7 @@ def sidebar():
 
 
 def main():
+    
     with st.sidebar:
         sidebar()
     pagina()
