@@ -49,7 +49,7 @@ def carrega_site(arquivo):
 
 def carrega_youtube(video_id):
     """Carrega um vídeo do YouTube."""
-    loader = YoutubeLoader.from_youtube_url(video_id,add_video_info=True, language="pt")
+    loader = YoutubeLoader.from_youtube_url(video_id, language="pt")
     list_documents = loader.load()
     documents= '\n\n'.join([doc.page_content for doc in list_documents])
     return documents
