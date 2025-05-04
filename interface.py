@@ -137,7 +137,7 @@ def sidebar():
 
     if st.button("Limpar memória", use_container_width=True):
         st.session_state['memoria']=MEMORIA
-        st.rerun()
+        
 
 
 def main():
