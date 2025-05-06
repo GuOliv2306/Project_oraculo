@@ -2,6 +2,8 @@
 
 Este projeto provê uma interface construída em Streamlit capaz de carregar arquivos de diferentes tipos (PDF, TXT, CSV) ou links de sites e de vídeos do YouTube. O objetivo é disponibilizar o conteúdo processado para consultas por meio de um chat interativo.
 
+[GustaBot](https://gustabot.streamlit.app/)
+
 ## Estrutura de Arquivos
 
 - **interface.py**  
